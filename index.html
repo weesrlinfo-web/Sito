@@ -103,10 +103,80 @@
         input::placeholder, textarea::placeholder {
             color: #666;
         }
+
+        /* Cookie Banner Styles */
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            border-top: 1px solid #333;
+            z-index: 100;
+            padding: 1rem;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+        }
+
+        .cookie-banner.hidden {
+            display: none;
+        }
+
+        .btn-gray {
+            background: #374151;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gray:hover {
+            background: #4B5563;
+        }
+
+        /* Map Overlay */
+        .map-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(17, 17, 17, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            border-radius: 1.5rem;
+        }
+
+        .map-overlay.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-brand-black text-white">
 
+    <!-- =====================================================
+         COOKIE BANNER
+    ===================================================== -->
+    <div id="cookie-banner" class="cookie-banner hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
+                <div class="text-sm text-gray-300 text-center lg:text-left">
+                    <p><strong class="text-white">Informativa Breve:</strong> Questo sito utilizza cookie tecnici e servizi di terze parti (Google Maps) per mostrarti la posizione delle nostre torrette. Cliccando su "Accetta", acconsenti all'uso dei cookie e al trattamento del tuo IP da parte di Google. Cliccando su "Rifiuta" o sulla "X", navigherai solo con i cookie tecnici, ma la mappa non sarà visibile.</p>
+                </div>
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                    <button onclick="acceptCookies()" class="btn-blue px-6 py-2 rounded-full font-semibold text-sm">
+                        Accetta Tutto
+                    </button>
+                    <button onclick="rejectCookies()" class="btn-gray px-6 py-2 rounded-full font-semibold text-sm">
+                        Rifiuta / Solo Tecnici
+                    </button>
+                    <a href="cookie-policy.html" class="text-brand-blue hover:underline text-sm font-semibold">
+                        Leggi la Cookie Policy
+                    </a>
+                    <button onclick="closeCookieBanner()" class="text-gray-400 hover:text-white ml-2">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- =====================================================
          SECTION 1: NAVIGATION (Tema Scuro + Logo PNG)
     ===================================================== -->
@@ -357,6 +427,23 @@
 
             <div class="relative w-full h-[500px] lg:h-[600px] bg-gray-800 rounded-3xl overflow-hidden shadow-2xl border border-gray-700">
                 
+                <!-- Map Overlay (blocks access until cookies accepted) -->
+                <div id="map-overlay" class="map-overlay">
+                    <div class="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-map-location-dot text-brand-blue text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4 text-center">Mappa delle Stazioni</h3>
+                    <p class="text-gray-400 text-center max-w-md mb-6 px-4">
+                        Per visualizzare la mappa interattiva con le stazioni PLUGHUB, è necessario accettare i cookie di terze parti (Google Maps).
+                    </p>
+                    <button onclick="acceptCookies()" class="btn-blue px-8 py-3 rounded-full font-bold">
+                        Accetta Cookie e Visualizza Mappa
+                    </button>
+                    <a href="cookie-policy.html" class="text-brand-blue hover:underline text-sm mt-4">
+                        Leggi la Cookie Policy
+                    </a>
+                </div>
+
                 <!-- Search Overlay -->
                 <div class="absolute top-6 left-1/2 transform -translate-x-1/2 w-full max-w-lg px-4 z-10">
                     <div class="bg-gray-900 rounded-full shadow-2xl p-2 flex items-center border border-gray-700">
@@ -375,10 +462,10 @@
                     </div>
                 </div>
 
-                <!-- Google Maps Embed -->
-                <div class="map-container h-full w-full">
+                <!-- Google Maps Embed (NO src - loaded dynamically ONLY after consent) -->
+                <div id="map-container" class="map-container h-full w-full">
                     <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2801.1589202834437!2d11.87606631555377!3d45.40643497910044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477eda5d6b7b9b9b%3A0x506c6b6b6b6b6b6b!2sItalia%20PD!5e0!3m2!1sit!2sit!4v1234567890" 
+                        id="google-map-iframe"
                         allowfullscreen="" 
                         loading="lazy" 
                         referrerpolicy="no-referrer-when-downgrade"
@@ -857,7 +944,8 @@
             <div class="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="text-gray-600 text-sm text-center md:text-left">
                     <p class="font-semibold text-gray-400 mb-1">PLUGHUB è un brand di Wee S.R.L.S.</p>
-                    <p>P.IVA 00000000000 | Tutti i diritti riservati © 2026</p>
+                    <p>Wee S.R.L.S. | Sede Legale: [Indirizzo, CAP, Città, Prov] | P.IVA [Tua P.IVA] | REA: [Tuo Numero REA] | Capitale Sociale: [Importo] € i.v. | PEC: [Tua PEC]</p>
+                    <p class="mt-1">Tutti i diritti riservati © 2026</p>
                 </div>
             </div>
         </div>
@@ -934,6 +1022,78 @@
             });
         });
 
+        // =====================================================
+        // COOKIE BANNER LOGIC
+        // =====================================================
+        const cookieBanner = document.getElementById('cookie-banner');
+        const mapOverlay = document.getElementById('map-overlay');
+        const mapIframe = document.getElementById('google-map-iframe');
+        const COOKIE_CONSENT_KEY = 'plugHubCookieConsent';
+        const MAP_SRC = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2801.1589202834437!2d11.87606631555377!3d45.40643497910044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477eda5d6b7b9b9b%3A0x506c6b6b6b6b6b6b!2sItalia%20PD!5e0!3m2!1sit!2sit!4v1234567890';
+
+        // Check cookie consent on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
+            if (consent === 'accepted') {
+                hideCookieBanner();
+                loadGoogleMap();
+            } else {
+                // No consent - show banner and block map
+                showCookieBanner();
+                blockGoogleMap();
+            }
+        });
+
+        function showCookieBanner() {
+            cookieBanner.classList.remove('hidden');
+        }
+
+        function hideCookieBanner() {
+            cookieBanner.classList.add('hidden');
+        }
+
+        function loadGoogleMap() {
+            // Load the iframe src only when consent is given
+            if (mapIframe && !mapIframe.src) {
+                mapIframe.src = MAP_SRC;
+            }
+            // Hide the overlay
+            if (mapOverlay) {
+                mapOverlay.classList.add('hidden');
+            }
+        }
+
+        function blockGoogleMap() {
+            // Remove iframe src to block Google Maps
+            if (mapIframe) {
+                mapIframe.removeAttribute('src');
+            }
+            // Show the overlay
+            if (mapOverlay) {
+                mapOverlay.classList.remove('hidden');
+            }
+        }
+
+        function acceptCookies() {
+            localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted');
+            hideCookieBanner();
+            loadGoogleMap();
+        }
+
+        function rejectCookies() {
+            localStorage.setItem(COOKIE_CONSENT_KEY, 'rejected');
+            hideCookieBanner();
+            blockGoogleMap();
+        }
+
+        function closeCookieBanner() {
+            hideCookieBanner();
+            // If no choice made, treat as rejected and block map
+            if (!localStorage.getItem(COOKIE_CONSENT_KEY)) {
+                localStorage.setItem(COOKIE_CONSENT_KEY, 'rejected');
+                blockGoogleMap();
+            }
+        }
     </script>
 </body>
 </html>
