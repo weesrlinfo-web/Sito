@@ -821,9 +821,6 @@
      langToggle: document.getElementById('lang-toggle'),
      langDropdown: document.getElementById('lang-dropdown'),
      currentLang: document.getElementById('current-lang'),
-     langToggleMobile: document.getElementById('lang-toggle-mobile'),
-     langDropdownMobile: document.getElementById('lang-dropdown-mobile'),
-     currentLangMobile: document.getElementById('current-lang-mobile'),
    };
    
    /** =========================
@@ -865,7 +862,6 @@
 
      // Update language selector display
      if (el.currentLang) el.currentLang.textContent = lang.toUpperCase();
-     if (el.currentLangMobile) el.currentLangMobile.textContent = lang.toUpperCase();
 
      // Update active state in dropdown
      document.querySelectorAll('.lang-option, .lang-option-mobile').forEach(option => {
@@ -886,50 +882,22 @@
      }
    }
 
-   function toggleLanguageDropdownMobile() {
-     if (el.langDropdownMobile) {
-       el.langDropdownMobile.classList.toggle('hidden');
-     }
-   }
-
    function closeLanguageDropdowns() {
      if (el.langDropdown) {
        el.langDropdown.classList.add('hidden');
        el.langToggle?.classList.remove('active');
      }
-     if (el.langDropdownMobile) {
-       el.langDropdownMobile.classList.add('hidden');
-     }
    }
 
    function initLanguageSelector() {
-     // Desktop toggle
+     // Language toggle
      el.langToggle?.addEventListener('click', (e) => {
        e.stopPropagation();
        toggleLanguageDropdown();
      });
 
-     // Mobile toggle
-     el.langToggleMobile?.addEventListener('click', (e) => {
-       e.stopPropagation();
-       toggleLanguageDropdownMobile();
-     });
-
-     // Desktop options
+     // Language options
      document.querySelectorAll('.lang-option').forEach(option => {
-       option.addEventListener('click', (e) => {
-         e.stopPropagation();
-         const lang = option.dataset.lang;
-         if (lang && TRANSLATIONS[lang]) {
-           setStoredLanguage(lang);
-           updatePageLanguage(lang);
-           closeLanguageDropdowns();
-         }
-       });
-     });
-
-     // Mobile options
-     document.querySelectorAll('.lang-option-mobile').forEach(option => {
        option.addEventListener('click', (e) => {
          e.stopPropagation();
          const lang = option.dataset.lang;
@@ -1033,7 +1001,7 @@
     *  Mobile menu + FAQ
     *  ========================= */
    function wireUiBasics() {
-     // Mobile menu
+     // Mobile menu (under 1024px)
      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
      const mobileMenu = document.getElementById('mobile-menu');
      let isMenuOpen = false;

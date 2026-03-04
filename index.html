@@ -70,14 +70,16 @@
   <nav id="navbar" class="fixed top-0 left-0 right-0 bg-brand-black/95 backdrop-blur-md z-50 border-b border-gray-800 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-20">
-        <a class="flex items-center" href="#top" aria-label="PLUGHUB">
-          <div class="w-14 h-14 mr-3 flex items-center justify-center">
+        <!-- Logo -->
+        <a class="flex items-center flex-shrink-0" href="#top" aria-label="PLUGHUB">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 mr-2 flex items-center justify-center">
             <img src="logo.png" alt="PLUGHUB Logo" class="w-full h-full object-contain">
           </div>
-          <span class="font-bold text-2xl tracking-tight"><span class="text-white">PLUG</span><span class="text-brand-blue">HUB</span></span>
+          <span class="font-bold text-lg sm:text-xl tracking-tight"><span class="text-white">PLUG</span><span class="text-brand-blue">HUB</span></span>
         </a>
 
-        <div class="hidden lg:flex items-center space-x-8">
+        <!-- Center Navigation (hidden on mobile, visible on desktop) -->
+        <div class="hidden lg:flex items-center space-x-4 xl:space-x-6">
           <a href="#mappa" class="font-semibold text-sm text-gray-300 hover:text-brand-blue transition-colors" data-i18n="nav.map">Mappa</a>
           <a href="#prezzi" class="font-semibold text-sm text-gray-300 hover:text-brand-blue transition-colors" data-i18n="nav.prices">Prezzi</a>
           <a href="#per-locali" class="font-semibold text-sm text-gray-300 hover:text-brand-blue transition-colors" data-i18n="nav.venues">Per i Locali</a>
@@ -85,13 +87,14 @@
           <a href="#contatti" class="font-semibold text-sm text-gray-300 hover:text-brand-blue transition-colors" data-i18n="nav.contact">Contatti</a>
         </div>
 
-        <div class="hidden lg:flex items-center gap-4">
+        <!-- Right Side: Language Selector + Partner Button (ALWAYS visible) -->
+        <div class="flex items-center gap-2">
           <!-- Language Selector -->
           <div class="language-selector relative">
-            <button id="lang-toggle" class="lang-btn flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-sm">
-              <i class="fa-solid fa-globe"></i>
+            <button id="lang-toggle" class="lang-btn flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-full font-semibold text-sm">
+              <i class="fa-solid fa-globe text-sm"></i>
               <span id="current-lang">IT</span>
-              <i class="fa-solid fa-chevron-down text-xs"></i>
+              <i class="fa-solid fa-chevron-down text-xs hidden sm:inline"></i>
             </button>
             <div id="lang-dropdown" class="lang-dropdown hidden">
               <button class="lang-option" data-lang="it">
@@ -121,25 +124,12 @@
               </button>
             </div>
           </div>
-          <a href="#per-locali" class="btn-blue px-6 py-3 rounded-full font-semibold text-sm shadow-md" data-i18n="nav.partner">Diventa Partner</a>
-        </div>
-
-        <div class="lg:hidden flex items-center gap-3">
-          <!-- Mobile Language Selector -->
-          <div class="language-selector relative">
-            <button id="lang-toggle-mobile" class="lang-btn-mobile flex items-center gap-2 px-3 py-2 rounded-full">
-              <i class="fa-solid fa-globe text-brand-blue"></i>
-              <span id="current-lang-mobile" class="text-sm font-semibold">IT</span>
-            </button>
-            <div id="lang-dropdown-mobile" class="lang-dropdown-mobile hidden">
-              <button class="lang-option-mobile" data-lang="it">🇮🇹 IT</button>
-              <button class="lang-option-mobile" data-lang="en">🇬🇧 EN</button>
-              <button class="lang-option-mobile" data-lang="es">🇪🇸 ES</button>
-              <button class="lang-option-mobile" data-lang="zh">🇨🇳 ZH</button>
-              <button class="lang-option-mobile" data-lang="ja">🇯🇵 JA</button>
-            </div>
-          </div>
-          <button id="mobile-menu-btn" class="text-white hover:text-brand-blue focus:outline-none p-2">
+          
+          <!-- Partner Button (hidden on small mobile, visible on larger screens) -->
+          <a href="#per-locali" class="hidden sm:block btn-blue px-3 sm:px-4 py-2 rounded-full font-semibold text-sm shadow-md whitespace-nowrap" data-i18n="nav.partner">Diventa Partner</a>
+          
+          <!-- Hamburger Menu (visible on mobile/tablet only) -->
+          <button id="mobile-menu-btn" class="lg:hidden text-white hover:text-brand-blue focus:outline-none p-2">
             <i class="fa-solid fa-bars text-2xl"></i>
           </button>
         </div>
